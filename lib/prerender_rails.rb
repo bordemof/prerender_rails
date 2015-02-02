@@ -23,9 +23,7 @@ module Rack
         'outbrain',
         'pinterest',
         'developers.google.com/+/web/snippet',
-        'slackbot',
-        'vkShare',
-        'W3C_Validator'
+        'slackbot'
       ]
 
       @extensions_to_ignore = [
@@ -80,20 +78,8 @@ module Rack
 
     def call(env)
       if should_show_prerendered_page(env)
-
-        cached_response = before_render(env)
-
-        if cached_response
-          return cached_response.finish
-        end
-
-        prerendered_response = get_prerendered_page_response(env)
-
-        if prerendered_response
-          response = build_rack_response_from_prerender(prerendered_response)
-          after_render(env, prerendered_response)
-          return response.finish
-        end
+        #CHECK CACHE
+        generate_static_html(env)
       end
 
       @app.call(env)
@@ -141,30 +127,19 @@ module Rack
       return is_requesting_prerendered_page
     end
 
-
-    def get_prerendered_page_response(env)
-      begin
-        url = URI.parse(build_api_url(env))
-        headers = {
-          'User-Agent' => env['HTTP_USER_AGENT'],
-          'Accept-Encoding' => 'gzip'
-        }
-        headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
-        headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
-        req = Net::HTTP::Get.new(url.request_uri, headers)
-        req.basic_auth(ENV['PRERENDER_USERNAME'], ENV['PRERENDER_PASSWORD']) if @options[:basic_auth]
-        response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
-        if response['Content-Encoding'] == 'gzip'
-          response.body = ActiveSupport::Gzip.decompress(response.body)
-          response['Content-Length'] = response.body.length
-          response.delete('Content-Encoding')
-        end
-        response
-      rescue
-        nil
+    def generate_static_html(env)
+      url = URI.parse(build_api_url(env))
+    
+      if url.query.include? '%2F'
+        structure = url.query.split('%2F')
+      else
+        structure = url.query.split('/')
       end
-    end
 
+      structure.shift
+      puts "PRERENDER CHANGED URL",'/seo/'+structure.join('/')
+      env['PATH_INFO'] = '/seo/'+structure.join('/')
+    end
 
     def build_api_url(env)
       new_env = env
@@ -185,39 +160,8 @@ module Rack
       end
 
       url = Rack::Request.new(new_env).url
-      prerender_url = get_prerender_service_url()
-      forward_slash = prerender_url[-1, 1] == '/' ? '' : '/'
-      "#{prerender_url}#{forward_slash}#{url}"
+      "#{url}"
     end
-
-
-    def get_prerender_service_url
-      @options[:prerender_service_url] || ENV['PRERENDER_SERVICE_URL'] || 'http://service.prerender.io/'
-    end
-
-
-    def build_rack_response_from_prerender(prerendered_response)
-      response = Rack::Response.new(prerendered_response.body, prerendered_response.code, prerendered_response.header)
-
-      @options[:build_rack_response_from_prerender].call(response, prerendered_response) if @options[:build_rack_response_from_prerender]
-
-      response
-    end
-
-    def before_render(env)
-      return nil unless @options[:before_render]
-
-      cached_render = @options[:before_render].call(env)
-
-      if cached_render && cached_render.is_a?(String)
-        Rack::Response.new(cached_render, 200, [])
-      elsif cached_render && cached_render.is_a?(Rack::Response)
-        cached_render
-      else
-        nil
-      end
-    end
-
 
     def after_render(env, response)
       return true unless @options[:after_render]
