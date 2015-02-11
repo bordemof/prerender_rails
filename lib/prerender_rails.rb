@@ -131,7 +131,7 @@ module Rack
       url = URI.parse(build_api_url(env))
       if url.query.nil?
         structure = ''
-      else if url.query.include? '%2F'
+      elsif url.query.include? '%2F'
         structure = url.query.split('%2F')
       else
         structure = url.query.split('/')
