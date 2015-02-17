@@ -129,18 +129,23 @@ module Rack
 
     def generate_static_html(env)
       url = URI.parse(build_api_url(env))
-      puts 'URI',url
-      if url.query.nil?
-        structure = ''
-      elsif url.query.include? '%2F'
-        structure = url.query.split('%2F')
-      else
-        structure = url.query.split('/')
-      end
+      puts 'DETECTED BOT REQUEST :',url
+      if url.query
+        if url.query.include? '%2F'
+          structure = url.query.split('%2F')
+        else
+          structure = url.query.split('/')
+        end
 
-      structure.shift
-      puts "PRERENDER CHANGED URL",'/seo/'+structure.join('/')
-      env['PATH_INFO'] = '/seo/'+structure.join('/')
+        structure.shift
+        #UTM PATCH
+        if structure[0].include? "scaped_fragment"
+          structure.shift
+        end
+
+        puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
+        env['PATH_INFO'] = '/seo/'+structure.join('/')
+      end
     end
 
     def build_api_url(env)
