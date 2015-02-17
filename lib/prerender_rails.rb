@@ -129,6 +129,7 @@ module Rack
 
     def generate_static_html(env)
       url = URI.parse(build_api_url(env))
+      puts 'URI',url
       if url.query.nil?
         structure = ''
       elsif url.query.include? '%2F'
