@@ -136,7 +136,7 @@ module Rack
         else
           structure = url.query.split('/')
         end
-        calc_true_url(url.query, env)
+        #calc_true_url(url.query, env)
         structure.shift
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
