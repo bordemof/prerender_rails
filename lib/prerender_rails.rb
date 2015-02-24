@@ -141,6 +141,7 @@ module Rack
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
           puts "DETECTING UTM"
+          binding.pry
           utm_url = url.to_s.gsub('&_escaped_fragment_')
           puts "UTM url",utm_url
           structure.shift
@@ -148,6 +149,9 @@ module Rack
 
         puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
         env['PATH_INFO'] = '/seo/'+structure.join('/')
+        rescue NoMethodError # you can also add this
+          puts "URL cant be transformed",url.query
+        end
       end
     end
 
