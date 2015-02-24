@@ -140,7 +140,7 @@ module Rack
         structure.shift
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
-          structure.shift
+          env['UTM'] = structure.shift
         end
 
         puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
