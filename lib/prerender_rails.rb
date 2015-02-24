@@ -149,10 +149,9 @@ module Rack
 
         puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
         env['PATH_INFO'] = '/seo/'+structure.join('/')
-        rescue NoMethodError
-          puts "URL cant be transformed",url.query
-        end
       end
+      rescue NoMethodError
+        puts "URL cant be transformed",url.query
     end
 
     def build_api_url(env)
