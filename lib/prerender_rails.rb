@@ -133,17 +133,15 @@ module Rack
       if url.query
         if url.query.include? '%2F'
           structure = url.query.split('%2F')
+          env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('?_escaped_fragment_=','#!')
         else
           structure = url.query.split('/')
+          env['TRUE_URL'] = url.query.gsub('?_escaped_fragment_=','#!')
         end
 
         structure.shift
         #UTM PATCH
-        env['TRUE_URL'] = url.query.gsub('?_escaped_fragment_=','#!')
-        puts "STR 0", structure[0]
         if structure[0].include? "scaped_fragment"
-          puts "DETECTING UTM"
-          env['TRUE_URL'] = url.query.gsub('&_escaped_fragment_=','#!')
           structure.shift
         end
 
