@@ -132,15 +132,11 @@ module Rack
       puts 'DETECTED BOT REQUEST :',url
       if url.query
         if url.query.include? '%2F'
-          binding.pry
           structure = url.query.split('%2F')
-          env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('_escaped_fragment_=','#!')
         else
-          binding.pry
           structure = url.query.split('/')
-          env['TRUE_URL'] = url.query.gsub('_escaped_fragment_=','#!')
         end
-
+        calc_true_url(url.query)
         structure.shift
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
@@ -153,7 +149,22 @@ module Rack
       rescue NoMethodError
         puts "URL cant be transformed",url.query
     end
-
+    def calc_true_url(query)
+      if query.include? '%2F'
+          if query.include? 'utm'
+            env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('&_escaped_fragment_=','/#!')
+          else
+            env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('_escaped_fragment_=','#!')
+          end
+        else
+          if query.include? 'utm'
+            env['TRUE_URL'] = url.query.gsub('&_escaped_fragment_=','/#!')
+          else
+            env['TRUE_URL'] = url.query.gsub('_escaped_fragment_=','#!')
+          end
+        end
+      end
+    end
     def build_api_url(env)
       new_env = env
       if env["CF-VISITOR"]
