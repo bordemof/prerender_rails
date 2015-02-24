@@ -152,15 +152,15 @@ module Rack
     def calc_true_url(query, env)
       if query.include? '%2F'
         if query.include? 'utm'
-            env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('&_escaped_fragment_=','/#!')
+            env['TRUE_URL'] = query.gsub('%2F','/').gsub('&_escaped_fragment_=','/#!')
         else
-            env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('_escaped_fragment_=','#!')
+            env['TRUE_URL'] = query.gsub('%2F','/').gsub('_escaped_fragment_=','#!')
         end
       else
         if query.include? 'utm'
-            env['TRUE_URL'] = url.query.gsub('&_escaped_fragment_=','/#!')
+            env['TRUE_URL'] = query.gsub('&_escaped_fragment_=','/#!')
         else
-            env['TRUE_URL'] = url.query.gsub('_escaped_fragment_=','#!')
+            env['TRUE_URL'] = query.gsub('_escaped_fragment_=','#!')
         end
       end
     end
