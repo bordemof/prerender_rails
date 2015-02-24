@@ -140,6 +140,9 @@ module Rack
         structure.shift
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
+          puts "DETECTING UTM"
+          utm_url = url.gsub('&_escaped_fragment_')
+          puts "UTM url"= utm_url
           structure.shift
         end
 
