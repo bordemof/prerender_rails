@@ -134,11 +134,11 @@ module Rack
         if url.query.include? '%2F'
           binding.pry
           structure = url.query.split('%2F')
-          env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('?_escaped_fragment_=','#!')
+          env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('_escaped_fragment_=','#!')
         else
           binding.pry
           structure = url.query.split('/')
-          env['TRUE_URL'] = url.query.gsub('?_escaped_fragment_=','#!')
+          env['TRUE_URL'] = url.query.gsub('_escaped_fragment_=','#!')
         end
 
         structure.shift
