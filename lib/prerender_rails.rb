@@ -142,8 +142,7 @@ module Rack
         if structure[0].include? "scaped_fragment"
           puts "DETECTING UTM"
           binding.pry
-          utm_url = url.to_s.gsub('&_escaped_fragment_')
-          puts "UTM url",utm_url
+          env['UTM_URL']= url.query.gsub('&_escaped_fragment_','')
           structure.shift
         end
 
