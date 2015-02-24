@@ -141,8 +141,8 @@ module Rack
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
           env['UTM'] = structure.shift
+          puts "UTM DETECTED :",env['UTM']
         end
-
         puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
         env['PATH_INFO'] = '/seo/'+structure.join('/')
       end
