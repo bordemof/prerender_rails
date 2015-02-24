@@ -149,7 +149,7 @@ module Rack
 
         puts "PRERENDER TRANSFORMING TO ...",'/seo/'+structure.join('/')
         env['PATH_INFO'] = '/seo/'+structure.join('/')
-        rescue NoMethodError # you can also add this
+        rescue NoMethodError
           puts "URL cant be transformed",url.query
         end
       end
