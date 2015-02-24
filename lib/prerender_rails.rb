@@ -139,7 +139,7 @@ module Rack
 
         structure.shift
         #UTM PATCH
-        env['TRUE_URL'] = url.query.gsub('?_escaped_fragment_','')
+        env['TRUE_URL'] = url.query.gsub('_escaped_fragment_','')
         if structure[0].include? "scaped_fragment"
           puts "DETECTING UTM"
           env['TRUE_URL'] = url.query.gsub('&_escaped_fragment_','')
