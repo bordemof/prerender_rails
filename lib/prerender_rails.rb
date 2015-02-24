@@ -136,7 +136,7 @@ module Rack
         else
           structure = url.query.split('/')
         end
-        calc_true_url(url.query)
+        calc_true_url(url.query, env)
         structure.shift
         #UTM PATCH
         if structure[0].include? "scaped_fragment"
@@ -149,7 +149,7 @@ module Rack
       rescue NoMethodError
         puts "URL cant be transformed",url.query
     end
-    def calc_true_url(query)
+    def calc_true_url(query, env)
       if query.include? '%2F'
         if query.include? 'utm'
             env['TRUE_URL'] = url.query.gsub('%2F','/').gsub('&_escaped_fragment_=','/#!')
